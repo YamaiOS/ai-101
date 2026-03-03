@@ -992,7 +992,7 @@ function fillReview() {
 }
 
 // ─── Submit ───────────────────────────────────────────────────────────
-function submitForm() {
+async function submitForm() {
   const terms = document.getElementById('terms');
   const termsErr = document.getElementById('e-terms');
   if (!terms.checked) { termsErr.classList.add('on'); return; }
@@ -1002,20 +1002,51 @@ function submitForm() {
   btn.textContent = 'Submitting…';
   btn.disabled = true;
 
-  // ── Wire up a real backend here ──────────────────────────────────────
-  // Option A — Formspree: set <form action="https://formspree.io/f/YOUR_ID" method="POST">
-  // Option B — EmailJS:   emailjs.sendForm('SERVICE','TEMPLATE', document.getElementById('regForm'))
-  // Option C — Custom endpoint: fetch('/api/register', { method:'POST', body: new FormData(...) })
-  // ─────────────────────────────────────────────────────────────────────
+  const payload = {
+    firstName:  g('firstName'),
+    lastName:   g('lastName'),
+    email:      g('email'),
+    phone:      g('phone'),
+    jobTitle:   g('jobTitle'),
+    org:        g('org'),
+    industry:   g('industry'),
+    referral:   g('referral'),
+    device:     gr('device'),
+    setupPath:  gr('setupPath'),
+    github:     g('github'),
+    envStatus:  g('envStatus'),
+    dietary:    g('dietary'),
+    workflow:   g('workflow'),
+    domain:     g('domain'),
+    aiExp:      g('aiExp'),
+    goal:       g('goal'),
+  };
 
-  setTimeout(() => {
+  try {
+    const res = await fetch('/.netlify/functions/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Submission failed');
+    }
+
     localStorage.removeItem('ai101_reg');
     document.getElementById('prog').style.display = 'none';
     document.getElementById('regForm').style.display = 'none';
-    document.getElementById('successName').textContent = g('firstName');
+    document.getElementById('successName').textContent = payload.firstName;
     document.getElementById('successState').classList.add('on');
-    document.getElementById('successState').scrollIntoView({ behavior:'smooth', block:'center' });
-  }, 1100);
+    document.getElementById('successState').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  } catch (err) {
+    btn.textContent = 'Submit Registration';
+    btn.disabled = false;
+    alert('Something went wrong: ' + err.message + '\n\nPlease try again or contact us directly.');
+  }
 }
 
 // ─── FAQ ──────────────────────────────────────────────────────────────

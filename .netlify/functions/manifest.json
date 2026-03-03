@@ -1,0 +1,1 @@
+{"functions":[{"bundler":"esbuild","buildData":{"runtimeAPIVersion":1},"mainFile":"/Users/yamai/ai-101/netlify/functions/register.js","name":"register","priority":10,"runtimeVersion":"nodejs22.x","path":"/Users/yamai/ai-101/.netlify/functions/register.zip","runtime":"js"}],"system":{"arch":"arm64","platform":"darwin"},"timestamp":1772579297420,"version":1}
